@@ -1,0 +1,160 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String    @id
+  email     String    @unique
+  projects  Project[]
+  createdAt DateTime  @default(now())
+}
+
+model Project {
+  id            String           @id @default(cuid())
+  userId        String
+  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name          String
+  domain        String?
+  thesis        String?          @db.Text
+  status        String           @default("active")
+  stages        Stage[]
+  leanCanvas    LeanCanvas?
+  scores        StressScore[]
+  pitchSections PitchSection[]
+  sprintEntries SprintEntry[]
+  tokenLaunch   TokenLaunchPlan?
+  exports       Export[]
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+}
+
+model Stage {
+  id          String     @id @default(cuid())
+  projectId   String
+  project     Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  stageKey    String
+  status      String     @default("not_started")
+  summary     String?    @db.Text
+  messages    Message[]
+  artifacts   Artifact[]
+  completedAt DateTime?
+  updatedAt   DateTime   @updatedAt
+
+  @@unique([projectId, stageKey])
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  stageId   String
+  stage     Stage    @relation(fields: [stageId], references: [id], onDelete: Cascade)
+  role      String
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+}
+
+model Artifact {
+  id        String   @id @default(cuid())
+  stageId   String
+  stage     Stage    @relation(fields: [stageId], references: [id], onDelete: Cascade)
+  type      String
+  key       String
+  value     String   @db.Text
+  updatedAt DateTime @updatedAt
+
+  @@unique([stageId, key])
+}
+
+model LeanCanvas {
+  id                   String   @id @default(cuid())
+  projectId            String   @unique
+  project              Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  problem              String?  @db.Text
+  solution             String?  @db.Text
+  uvp                  String?  @db.Text
+  unfairAdvantage      String?  @db.Text
+  customerSegments     String?  @db.Text
+  existingAlternatives String?  @db.Text
+  keyMetrics           String?  @db.Text
+  channels             String?  @db.Text
+  costStructure        String?  @db.Text
+  revenueStreams        String?  @db.Text
+  highLevelConcept     String?  @db.Text
+  earlyAdopters        String?  @db.Text
+  updatedAt            DateTime @updatedAt
+}
+
+model StressScore {
+  id        String   @id @default(cuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  dimension String
+  score     Int
+  notes     String?  @db.Text
+  updatedAt DateTime @updatedAt
+
+  @@unique([projectId, dimension])
+}
+
+model PitchSection {
+  id        String   @id @default(cuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  section   String
+  content   String   @db.Text
+  updatedAt DateTime @updatedAt
+
+  @@unique([projectId, section])
+}
+
+model SprintEntry {
+  id           String   @id @default(cuid())
+  projectId    String
+  project      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  sprintNumber Int
+  status       String   @default("not_started")
+  outcome      String?  @db.Text
+  interviews   Int      @default(0)
+  commitments  Int      @default(0)
+  fivePScores  Json?
+  updatedAt    DateTime @updatedAt
+
+  @@unique([projectId, sprintNumber])
+}
+
+model TokenLaunchPlan {
+  id               String   @id @default(cuid())
+  projectId        String   @unique
+  project          Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  dxrStrategy      String?
+  dxrNotes         String?  @db.Text
+  targetLaunchpads String?  @db.Text
+  tokenSupply      BigInt?
+  teamAllocation   Int?
+  communityAlloc   Int?
+  investorAlloc    Int?
+  treasuryAlloc    Int?
+  auditStatus      String?
+  auditFirm        String?
+  legalEntity      String?
+  legalCounsel     String?
+  readinessScore   Int?
+  bearMarketTest   Json?
+  checklist        Json?
+  updatedAt        DateTime @updatedAt
+}
+
+model Export {
+  id        String   @id @default(cuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  type      String
+  url       String?
+  fileName  String?
+  createdAt DateTime @default(now())
+}
