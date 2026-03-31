@@ -164,7 +164,7 @@ export async function generateValidationReport(
   stages: { stageKey: string; summary: string | null }[],
   sprints: { sprintNumber: number; status: string; outcome: string | null }[],
 ): Promise<Buffer> {
-  let body = `
+  const body = `
 <div class="cover">
   <h1>${escapeText(project.name)} — Validation Report</h1>
   ${project.thesis ? `<p>${escapeText(project.thesis)}</p>` : ""}

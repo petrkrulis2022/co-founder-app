@@ -28,7 +28,7 @@ export default async function ProjectLayout({
     stageStatusMap[s.stageKey] = s.status;
   }
   const completedCount = project.stages.filter(
-    (s: { status: string }) => s.status === "completed",
+    (s: { status: string }) => s.status === "complete",
   ).length;
   const progress = Math.round((completedCount / 13) * 100);
 

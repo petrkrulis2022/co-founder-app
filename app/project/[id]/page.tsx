@@ -10,6 +10,8 @@ import { getLeanCanvas } from "@/lib/db/queries/lean-canvas";
 import { getPitchSections } from "@/lib/db/queries/pitch";
 import { prisma } from "@/lib/db/prisma";
 import { ProjectHeader } from "@/components/project/project-header";
+import { HealthScorePanel } from "@/components/project/health-score-panel";
+import { ShareSection } from "@/components/project/share-section";
 
 const CANVAS_FIELDS = [
   "problem",
@@ -52,7 +54,7 @@ export default async function ProjectOverviewPage({
   );
 
   const completedCount = project.stages.filter(
-    (s) => s.status === "completed",
+    (s) => s.status === "complete",
   ).length;
 
   const stressAvg =
@@ -70,7 +72,7 @@ export default async function ProjectOverviewPage({
     : 0;
 
   const nextStage = STAGES.find(
-    (s) => stageStatusMap.get(s.key) !== "completed",
+    (s) => stageStatusMap.get(s.key) !== "complete",
   );
 
   return (
@@ -83,6 +85,9 @@ export default async function ProjectOverviewPage({
         domain={project.domain || "other"}
         status={project.status || "active"}
       />
+
+      {/* Health Score */}
+      <HealthScorePanel projectId={id} />
 
       {/* Stats row */}
       <div className="flex flex-wrap gap-4">
@@ -125,6 +130,9 @@ export default async function ProjectOverviewPage({
         </Link>
       )}
 
+      {/* Share with advisors */}
+      <ShareSection projectId={id} />
+
       {/* Stages grid */}
       <div>
         <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-4">
@@ -143,15 +151,15 @@ export default async function ProjectOverviewPage({
                           className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold"
                           style={{
                             backgroundColor:
-                              status === "completed"
+                              status === "complete"
                                 ? stage.color
                                 : "transparent",
                             color:
-                              status === "completed" ? "#050505" : stage.color,
+                              status === "complete" ? "#050505" : stage.color,
                             border: `1.5px solid ${stage.color}`,
                           }}
                         >
-                          {status === "completed"
+                          {status === "complete"
                             ? "✓"
                             : String(stage.number).padStart(2, "0")}
                         </span>

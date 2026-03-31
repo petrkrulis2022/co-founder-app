@@ -1,33 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Founder OS — AI Co-Founder for Web3 Startups
+
+Your AI co-founder that guides web3 founders from idea to investor pitch across 13 stages.
+
+## Tech Stack
+
+- **Framework**: Next.js 16 (App Router, Turbopack)
+- **AI**: Anthropic Claude (Sonnet 4)
+- **Auth**: Clerk
+- **Database**: PostgreSQL (Supabase) + Prisma ORM
+- **Rate Limiting**: Upstash Redis
+- **Styling**: Tailwind CSS v4 + shadcn (base-nova)
+- **Export**: PDF + PPTX generation
 
 ## Getting Started
 
-First, run the development server:
+1. Clone the repo and install dependencies:
+
+```bash
+npm install
+```
+
+2. Copy `.env.local.example` to `.env.local` and fill in your keys:
+
+```bash
+cp .env.local.example .env.local
+```
+
+3. Push the database schema:
+
+```bash
+npx prisma db push
+```
+
+4. Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to start.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deployment (Vercel)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Push to GitHub
+2. Import in Vercel
+3. Add all environment variables from `.env.local.example`
+4. Set `NEXT_PUBLIC_APP_URL` to your Vercel domain
+5. Deploy — Prisma generates automatically via the build command
 
-## Learn More
+## 13 Stages
 
-To learn more about Next.js, take a look at the following resources:
+1. Ideation → 2. Validation → 3. Stress Test → 4. Lean Canvas → 5. Selection → 6. MVP → 7. Mafia Offer → 8. Build → 9. Launch → 10. Feedback → 11. Pitch → 12. Token Launch → 13. Decision
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- AI-guided conversations across all 13 startup stages
+- Stress test scoring (7 dimensions)
+- Lean Canvas auto-fill
+- Sprint tracking with customer discovery
+- Pitch deck generation (10 sections)
+- Token launch planning
+- PDF & PPTX export
+- Health score system (0-100 with grade)
+- Advisor share links
+- Multi-project comparison
+- Full data export
 
 ## Deploy on Vercel
 

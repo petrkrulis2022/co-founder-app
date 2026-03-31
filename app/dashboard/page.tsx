@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +23,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+interface HealthScore {
+  total: number;
+  grade: string;
+  color: string;
+  breakdown: {
+    validation: number;
+    canvas: number;
+    customer: number;
+    pitch: number;
+    momentum: number;
+  };
+  weakest: string;
+  strongest: string;
+  summary: string;
+}
 
 interface Project {
   id: string;
@@ -64,17 +86,34 @@ const CANVAS_FIELDS = [
 export default function DashboardPage() {
   const router = useRouter();
   const [projects, setProjects] = useState<Project[]>([]);
+  const [healthScores, setHealthScores] = useState<Record<string, HealthScore>>(
+    {},
+  );
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [creating, setCreating] = useState(false);
   const [name, setName] = useState("");
   const [domain, setDomain] = useState("defi");
   const [thesis, setThesis] = useState("");
+  const [sortBy, setSortBy] = useState<"updated" | "score">("updated");
 
   useEffect(() => {
     fetch("/api/projects")
       .then((r) => r.json())
-      .then((data) => setProjects(data.projects ?? []))
+      .then((data) => {
+        const loadedProjects = data.projects ?? [];
+        setProjects(loadedProjects);
+        for (const p of loadedProjects) {
+          fetch(`/api/health-score?projectId=${p.id}`)
+            .then((r) => r.json())
+            .then((hs: HealthScore) => {
+              if (hs.total !== undefined) {
+                setHealthScores((prev) => ({ ...prev, [p.id]: hs }));
+              }
+            })
+            .catch(() => {});
+        }
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -225,72 +264,162 @@ export default function DashboardPage() {
           </Button>
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project) => {
-            const completed = getCompletedCount(project.stages);
-            const progress = Math.round((completed / 13) * 100);
-            const stressAvg = getStressAvg(project.scores);
-            const canvasFilled = getCanvasFilled(project.leanCanvas);
-            const pitchCount = project.pitchSections?.length ?? 0;
-
-            return (
-              <Card
-                key={project.id}
-                className="cursor-pointer hover:border-[#00ff9d]/50 transition-colors group"
-                onClick={() => router.push(`/project/${project.id}`)}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex gap-2">
+              <Button
+                variant={sortBy === "updated" ? "secondary" : "ghost"}
+                size="sm"
+                className="text-xs"
+                onClick={() => setSortBy("updated")}
               >
-                <CardHeader className="pb-2">
-                  <div className="flex items-start justify-between">
-                    <CardTitle className="text-lg group-hover:text-[#00ff9d] transition-colors">
-                      {project.name}
-                    </CardTitle>
-                    <Badge variant="secondary" className="text-[10px] shrink-0">
-                      {project.domain}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {project.thesis && (
-                    <p className="text-sm text-muted-foreground line-clamp-2">
-                      {project.thesis}
-                    </p>
-                  )}
+                Recent
+              </Button>
+              <Button
+                variant={sortBy === "score" ? "secondary" : "ghost"}
+                size="sm"
+                className="text-xs"
+                onClick={() => setSortBy("score")}
+              >
+                Score
+              </Button>
+            </div>
+            {projects.length >= 2 && (
+              <Link
+                href="/dashboard/compare"
+                className="text-xs text-[#00d4ff] hover:underline"
+              >
+                Compare ideas →
+              </Link>
+            )}
+          </div>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {[...projects]
+              .sort((a, b) => {
+                if (sortBy === "score") {
+                  return (
+                    (healthScores[b.id]?.total ?? 0) -
+                    (healthScores[a.id]?.total ?? 0)
+                  );
+                }
+                return (
+                  new Date(b.updatedAt).getTime() -
+                  new Date(a.updatedAt).getTime()
+                );
+              })
+              .map((project) => {
+                const completed = getCompletedCount(project.stages);
+                const progress = Math.round((completed / 13) * 100);
+                const stressAvg = getStressAvg(project.scores);
+                const canvasFilled = getCanvasFilled(project.leanCanvas);
+                const pitchCount = project.pitchSections?.length ?? 0;
+                const hs = healthScores[project.id];
 
-                  {/* Stats row */}
-                  <div className="flex gap-3 text-xs">
-                    {stressAvg !== null && (
-                      <span
-                        className={`font-mono ${stressAvg >= 7 ? "text-green-400" : stressAvg >= 4 ? "text-yellow-400" : "text-red-400"}`}
-                      >
-                        {stressAvg}/10
-                      </span>
-                    )}
-                    {canvasFilled > 0 && (
-                      <span className="text-muted-foreground">
-                        🟩 {canvasFilled}/12
-                      </span>
-                    )}
-                    {pitchCount > 0 && (
-                      <span className="text-muted-foreground">
-                        📄 {pitchCount}
-                      </span>
-                    )}
-                  </div>
+                return (
+                  <Card
+                    key={project.id}
+                    className="cursor-pointer hover:border-[#00ff9d]/50 transition-colors group"
+                    onClick={() => router.push(`/project/${project.id}`)}
+                  >
+                    <CardHeader className="pb-2">
+                      <div className="flex items-start justify-between">
+                        <CardTitle className="text-lg group-hover:text-[#00ff9d] transition-colors">
+                          {project.name}
+                        </CardTitle>
+                        <div className="flex items-center gap-2 shrink-0">
+                          {hs && (
+                            <Tooltip>
+                              <TooltipTrigger
+                                render={<span />}
+                                className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold cursor-default"
+                                style={{
+                                  backgroundColor: hs.color + "22",
+                                  color: hs.color,
+                                  border: `2px solid ${hs.color}`,
+                                }}
+                              >
+                                {hs.grade}
+                              </TooltipTrigger>
+                              <TooltipContent side="left" className="text-xs">
+                                <p className="font-semibold mb-1">
+                                  Score: {hs.total}/100
+                                </p>
+                                <div className="space-y-0.5">
+                                  {Object.entries(hs.breakdown).map(
+                                    ([k, v]) => (
+                                      <div
+                                        key={k}
+                                        className="flex justify-between gap-4"
+                                      >
+                                        <span className="capitalize">{k}</span>
+                                        <span className="font-mono">
+                                          {v}/
+                                          {k === "validation"
+                                            ? 25
+                                            : k === "momentum"
+                                              ? 15
+                                              : 20}
+                                        </span>
+                                      </div>
+                                    ),
+                                  )}
+                                </div>
+                              </TooltipContent>
+                            </Tooltip>
+                          )}
+                          <Badge
+                            variant="secondary"
+                            className="text-[10px] shrink-0"
+                          >
+                            {project.domain}
+                          </Badge>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      {project.thesis && (
+                        <p className="text-sm text-muted-foreground line-clamp-2">
+                          {project.thesis}
+                        </p>
+                      )}
 
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>Progress</span>
-                      <span>{completed}/13 stages</span>
-                    </div>
-                    <Progress value={progress} className="h-1.5" />
-                  </div>
-                  <p className="text-[10px] text-muted-foreground">
-                    Updated {new Date(project.updatedAt).toLocaleDateString()}
-                  </p>
-                </CardContent>
-              </Card>
-            );
-          })}
+                      {/* Stats row */}
+                      <div className="flex gap-3 text-xs">
+                        {stressAvg !== null && (
+                          <span
+                            className={`font-mono ${stressAvg >= 7 ? "text-green-400" : stressAvg >= 4 ? "text-yellow-400" : "text-red-400"}`}
+                          >
+                            {stressAvg}/10
+                          </span>
+                        )}
+                        {canvasFilled > 0 && (
+                          <span className="text-muted-foreground">
+                            🟩 {canvasFilled}/12
+                          </span>
+                        )}
+                        {pitchCount > 0 && (
+                          <span className="text-muted-foreground">
+                            📄 {pitchCount}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-xs text-muted-foreground">
+                          <span>Progress</span>
+                          <span>{completed}/13 stages</span>
+                        </div>
+                        <Progress value={progress} className="h-1.5" />
+                      </div>
+                      <p className="text-[10px] text-muted-foreground">
+                        Updated{" "}
+                        {new Date(project.updatedAt).toLocaleDateString()}
+                      </p>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+          </div>
         </div>
       )}
     </main>
