@@ -1,7 +1,11 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
-import { generateInvestorMemo } from "@/lib/export/pdf-generator";
+import {
+  generateInvestorMemo,
+  generateLeanCanvas,
+  generateValidationReport,
+} from "@/lib/export/pdf-generator";
 import { generatePitchDeck } from "@/lib/export/pptx-generator";
 
 export async function GET(req: NextRequest) {
@@ -106,7 +110,26 @@ export async function POST(req: NextRequest) {
             { status: 400 },
           );
         }
-        buffer = await generateInvestorMemo(project, pitchMap);
+        const canvasObj: Record<string, string | null> = {};
+        for (const key of [
+          "problem",
+          "solution",
+          "uvp",
+          "unfairAdvantage",
+          "customerSegments",
+          "existingAlternatives",
+          "keyMetrics",
+          "channels",
+          "costStructure",
+          "revenueStreams",
+          "highLevelConcept",
+          "earlyAdopters",
+        ] as const) {
+          canvasObj[key] =
+            (leanCanvas as unknown as Record<string, string | null>)[key] ??
+            null;
+        }
+        buffer = await generateLeanCanvas(project, canvasObj);
         fileName = `${project.name.replace(/\s+/g, "_")}_Lean_Canvas.pdf`;
         contentType = "application/pdf";
         break;
@@ -119,7 +142,16 @@ export async function POST(req: NextRequest) {
             { status: 400 },
           );
         }
-        buffer = await generateInvestorMemo(project, pitchMap);
+        buffer = await generateValidationReport(
+          project,
+          scores,
+          stages.map((s) => ({ stageKey: s.stageKey, summary: s.summary })),
+          sprints.map((s) => ({
+            sprintNumber: s.sprintNumber,
+            status: s.status,
+            outcome: s.outcome,
+          })),
+        );
         fileName = `${project.name.replace(/\s+/g, "_")}_Validation_Report.pdf`;
         contentType = "application/pdf";
         break;

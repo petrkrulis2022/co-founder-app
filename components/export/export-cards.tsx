@@ -32,7 +32,7 @@ export function ExportCards({ projectId, options }: ExportCardsProps) {
       const res = await fetch("/api/export", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ projectId, type: option.key }),
+        body: JSON.stringify({ projectId, exportType: option.key }),
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({ error: "Export failed" }));

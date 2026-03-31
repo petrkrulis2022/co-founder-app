@@ -103,7 +103,7 @@ export default function DashboardPage() {
   }
 
   function getCompletedCount(stages: { status: string }[]) {
-    return stages.filter((s) => s.status === "completed").length;
+    return stages.filter((s) => s.status === "complete").length;
   }
 
   function getStressAvg(scores: { score: number }[]) {

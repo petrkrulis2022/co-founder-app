@@ -3,12 +3,12 @@ import type { Project, StressScore } from "@prisma/client";
 const SECTION_ORDER = [
   "one_liner",
   "team",
-  "problem",
+  "problem_market",
   "product",
-  "gtm",
+  "gtm_strategy",
   "business_model",
   "traction",
-  "competitive",
+  "competitive_landscape",
   "vision",
   "use_of_funds",
 ] as const;
@@ -16,12 +16,12 @@ const SECTION_ORDER = [
 const SECTION_TITLES: Record<string, string> = {
   one_liner: "One-Liner",
   team: "Team Overview",
-  problem: "Problem & Market",
+  problem_market: "Problem & Market",
   product: "Product Overview",
-  gtm: "GTM Strategy",
+  gtm_strategy: "GTM Strategy",
   business_model: "Business Model",
   traction: "Traction",
-  competitive: "Competitive Landscape",
+  competitive_landscape: "Competitive Landscape",
   vision: "Vision",
   use_of_funds: "Use of Funds",
 };

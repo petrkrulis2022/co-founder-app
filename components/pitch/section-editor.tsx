@@ -12,24 +12,29 @@ import { Badge } from "@/components/ui/badge";
 
 const PITCH_SECTIONS = [
   {
-    key: "title_slide",
-    label: "Title Slide",
-    hint: "Company name, tagline, logo area",
+    key: "one_liner",
+    label: "One-Liner",
+    hint: "One sentence, repeatable from memory",
   },
   {
-    key: "problem",
-    label: "Problem",
-    hint: "What pain exists today? Who suffers?",
+    key: "team",
+    label: "Team",
+    hint: "Founders, key hires, relevant experience",
   },
   {
-    key: "solution",
-    label: "Solution",
-    hint: "Your product/service: what it does and how",
+    key: "problem_market",
+    label: "Problem & Market",
+    hint: "What pain exists today? Who suffers? TAM/SAM/SOM",
   },
   {
-    key: "market_size",
-    label: "Market Size",
-    hint: "TAM / SAM / SOM with sources",
+    key: "product",
+    label: "Product",
+    hint: "What it does, why now, and why web3",
+  },
+  {
+    key: "gtm_strategy",
+    label: "GTM Strategy",
+    hint: "Go-to-market plan, channels, unfair distribution",
   },
   {
     key: "business_model",
@@ -42,24 +47,19 @@ const PITCH_SECTIONS = [
     hint: "Metrics, milestones, users, revenue",
   },
   {
-    key: "team",
-    label: "Team",
-    hint: "Founders, key hires, relevant experience",
+    key: "competitive_landscape",
+    label: "Competitive Landscape",
+    hint: "Competitors and credible differentiation",
   },
   {
-    key: "tokenomics",
-    label: "Tokenomics",
-    hint: "Token utility, distribution, vesting",
+    key: "vision",
+    label: "Vision",
+    hint: "5-year picture, where this is going",
   },
   {
-    key: "roadmap",
-    label: "Roadmap",
-    hint: "Key milestones for next 12-18 months",
-  },
-  {
-    key: "ask",
-    label: "Ask",
-    hint: "How much you're raising, use of funds, terms",
+    key: "use_of_funds",
+    label: "Use of Funds",
+    hint: "How much you're raising and what you'll do with it",
   },
 ];
 

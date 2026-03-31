@@ -4,26 +4,26 @@ import type { Project, StressScore } from "@prisma/client";
 const SECTION_TITLES: Record<string, string> = {
   one_liner: "One-Liner",
   team: "The Team",
-  problem: "The Problem",
+  problem_market: "The Problem",
   product: "Our Solution",
-  gtm: "Go To Market",
+  gtm_strategy: "Go To Market",
   business_model: "How We Make Money",
   traction: "Traction",
-  competitive: "Why We Win",
+  competitive_landscape: "Why We Win",
   vision: "Vision & Ask",
   use_of_funds: "Use of Funds",
 };
 
 const SLIDE_MAP: { key: string; title: string }[] = [
   { key: "cover", title: "Cover" },
-  { key: "problem", title: "The Problem" },
+  { key: "problem_market", title: "The Problem" },
   { key: "product", title: "Our Solution" },
   { key: "product", title: "Why Now?" },
   { key: "business_model", title: "How We Make Money" },
-  { key: "gtm", title: "Go To Market" },
+  { key: "gtm_strategy", title: "Go To Market" },
   { key: "traction", title: "Traction" },
   { key: "team", title: "The Team" },
-  { key: "competitive", title: "Why We Win" },
+  { key: "competitive_landscape", title: "Why We Win" },
   { key: "vision", title: "Vision & Ask" },
 ];
 
@@ -89,14 +89,14 @@ export async function generatePitchDeck(
 
   // Content slides
   const slideConfigs = [
-    { key: "problem", title: "The Problem" },
+    { key: "problem_market", title: "The Problem" },
     { key: "product", title: "Our Solution" },
     { key: "product", title: "Why Now?" },
     { key: "business_model", title: "How We Make Money" },
-    { key: "gtm", title: "Go To Market" },
+    { key: "gtm_strategy", title: "Go To Market" },
     { key: "traction", title: "Traction" },
     { key: "team", title: "The Team" },
-    { key: "competitive", title: "Why We Win" },
+    { key: "competitive_landscape", title: "Why We Win" },
     { key: "vision", title: "Vision & Ask" },
   ];
 

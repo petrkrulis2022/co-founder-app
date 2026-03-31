@@ -11,16 +11,16 @@ import {
 } from "@/components/ui/dialog";
 
 const SECTION_LABELS: Record<string, string> = {
-  title_slide: "Title Slide",
-  problem: "Problem",
-  solution: "Solution",
-  market_size: "Market Size",
+  one_liner: "One-Liner",
+  team: "Team",
+  problem_market: "Problem & Market",
+  product: "Product",
+  gtm_strategy: "GTM Strategy",
   business_model: "Business Model",
   traction: "Traction",
-  team: "Team",
-  tokenomics: "Tokenomics",
-  roadmap: "Roadmap",
-  ask: "Ask",
+  competitive_landscape: "Competitive Landscape",
+  vision: "Vision",
+  use_of_funds: "Use of Funds",
 };
 
 interface PitchPreviewProps {
