@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Paperclip, X, FileText } from "lucide-react";
 
 interface ChatMessage {
   id?: string;
@@ -118,8 +119,16 @@ export function ChatInterface({
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [attachedDoc, setAttachedDoc] = useState<{
+    name: string;
+    text: string;
+    truncated: boolean;
+  } | null>(null);
+  const [isParsing, setIsParsing] = useState(false);
+  const [parseError, setParseError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const hasSentSeed = useRef(false);
 
   const scrollToBottom = useCallback(() => {
@@ -217,8 +226,41 @@ export function ChatInterface({
     }
   }, [searchParams, messages.length, doSend]);
 
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    // Reset input so same file can be re-selected if needed
+    e.target.value = "";
+
+    setParseError(null);
+    setIsParsing(true);
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      const res = await fetch("/api/parse-document", {
+        method: "POST",
+        body: form,
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setParseError(data.error ?? "Failed to parse document");
+        return;
+      }
+      setAttachedDoc({ name: data.fileName, text: data.text, truncated: data.truncated });
+    } catch {
+      setParseError("Failed to upload document");
+    } finally {
+      setIsParsing(false);
+    }
+  };
+
   const sendMessage = async () => {
-    await doSend(input);
+    let messageText = input;
+    if (attachedDoc) {
+      messageText = `[ATTACHED DOCUMENT: ${attachedDoc.name}]${attachedDoc.truncated ? " (truncated to 50,000 chars)" : ""}\n\n${attachedDoc.text}\n\n---\n\n${input}`;
+      setAttachedDoc(null);
+    }
+    await doSend(messageText);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -408,7 +450,60 @@ export function ChatInterface({
 
       {/* Input */}
       <div className="border-t border-border p-4 shrink-0">
+        {/* Attached document badge */}
+        {attachedDoc && (
+          <div className="flex items-center gap-2 mb-2 px-1">
+            <div
+              className="flex items-center gap-1.5 text-xs px-2 py-1 rounded-md border"
+              style={{ borderColor: `${stageColor}40`, backgroundColor: `${stageColor}10`, color: stageColor }}
+            >
+              <FileText className="w-3 h-3 shrink-0" />
+              <span className="truncate max-w-[180px]">{attachedDoc.name}</span>
+              {attachedDoc.truncated && <span className="opacity-60">(truncated)</span>}
+              <button
+                onClick={() => setAttachedDoc(null)}
+                className="ml-1 opacity-60 hover:opacity-100 transition-opacity"
+                aria-label="Remove attachment"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </div>
+          </div>
+        )}
+        {/* Parse error */}
+        {parseError && (
+          <div className="flex items-center justify-between text-xs text-destructive mb-2 px-1">
+            <span>{parseError}</span>
+            <button onClick={() => setParseError(null)} className="opacity-60 hover:opacity-100">
+              <X className="w-3 h-3" />
+            </button>
+          </div>
+        )}
         <div className="flex gap-2 items-end">
+          {/* Hidden file input */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".pdf,.docx,.txt"
+            className="hidden"
+            onChange={handleFileChange}
+          />
+          {/* Paperclip button */}
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="h-[44px] w-[44px] p-0 shrink-0"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isStreaming || isParsing}
+            title="Attach PDF, DOCX or TXT"
+          >
+            {isParsing ? (
+              <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <Paperclip className="w-4 h-4" />
+            )}
+          </Button>
           <Textarea
             ref={textareaRef}
             value={input}
@@ -420,7 +515,7 @@ export function ChatInterface({
           />
           <Button
             onClick={sendMessage}
-            disabled={!input.trim() || isStreaming}
+            disabled={(!input.trim() && !attachedDoc) || isStreaming}
             size="sm"
             className="h-[44px] px-4"
             style={{ backgroundColor: stageColor, color: "#050505" }}
