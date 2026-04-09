@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
   if (!contentType.includes("multipart/form-data")) {
     return NextResponse.json(
       { error: "Expected multipart/form-data" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
   } catch {
     return NextResponse.json(
       { error: "Failed to parse form data" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
   if (file.size > MAX_FILE_SIZE) {
     return NextResponse.json(
       { error: "File too large (max 10 MB)" },
-      { status: 413 }
+      { status: 413 },
     );
   }
 
@@ -52,9 +52,14 @@ export async function POST(req: NextRequest) {
       mimeType === "application/pdf" ||
       fileName.toLowerCase().endsWith(".pdf")
     ) {
-      const pdfParseModule = await import("pdf-parse");
-      const pdfParse = (pdfParseModule as unknown as { default: (buf: Buffer) => Promise<{ text: string }> }).default ?? pdfParseModule;
-      const parsed = await (pdfParse as (buf: Buffer) => Promise<{ text: string }>)(buffer);
+      // Import the internal lib file directly — avoids pdf-parse loading its
+      // test fixture (test/data/05-versions-space.pdf) at module init time,
+      // which throws an "illegal path" error in Next.js server routes.
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const pdfParse = require("pdf-parse/lib/pdf-parse.js") as (
+        buf: Buffer,
+      ) => Promise<{ text: string }>;
+      const parsed = await pdfParse(buffer);
       text = parsed.text;
     } else if (
       mimeType ===
@@ -71,15 +76,18 @@ export async function POST(req: NextRequest) {
       text = buffer.toString("utf-8");
     } else {
       return NextResponse.json(
-        { error: "Unsupported file type. Please upload a PDF, DOCX, or TXT file." },
-        { status: 415 }
+        {
+          error:
+            "Unsupported file type. Please upload a PDF, DOCX, or TXT file.",
+        },
+        { status: 415 },
       );
     }
   } catch (err) {
     console.error("[parse-document] parse error:", err);
     return NextResponse.json(
       { error: "Failed to extract text from document" },
-      { status: 422 }
+      { status: 422 },
     );
   }
 
@@ -88,7 +96,7 @@ export async function POST(req: NextRequest) {
   if (!text) {
     return NextResponse.json(
       { error: "No readable text found in document" },
-      { status: 422 }
+      { status: 422 },
     );
   }
 

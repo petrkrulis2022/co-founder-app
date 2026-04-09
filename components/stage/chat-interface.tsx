@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Paperclip, X, FileText } from "lucide-react";
+import { Paperclip, X, FileText, Maximize2 } from "lucide-react";
 
 interface ChatMessage {
   id?: string;
@@ -115,6 +115,7 @@ export function ChatInterface({
   stageColor,
 }: ChatInterfaceProps) {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
@@ -246,7 +247,11 @@ export function ChatInterface({
         setParseError(data.error ?? "Failed to parse document");
         return;
       }
-      setAttachedDoc({ name: data.fileName, text: data.text, truncated: data.truncated });
+      setAttachedDoc({
+        name: data.fileName,
+        text: data.text,
+        truncated: data.truncated,
+      });
     } catch {
       setParseError("Failed to upload document");
     } finally {
@@ -450,16 +455,38 @@ export function ChatInterface({
 
       {/* Input */}
       <div className="border-t border-border p-4 shrink-0">
+        {/* Lean Canvas quick-access button */}
+        {stageKey === "lean-canvas" && (
+          <div className="mb-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                router.push(`/project/${projectId}/lean-canvas/fullscreen`)
+              }
+              className="gap-1.5 text-xs h-7 px-2.5"
+            >
+              <Maximize2 className="w-3.5 h-3.5" />
+              Open Full Canvas
+            </Button>
+          </div>
+        )}
         {/* Attached document badge */}
         {attachedDoc && (
           <div className="flex items-center gap-2 mb-2 px-1">
             <div
               className="flex items-center gap-1.5 text-xs px-2 py-1 rounded-md border"
-              style={{ borderColor: `${stageColor}40`, backgroundColor: `${stageColor}10`, color: stageColor }}
+              style={{
+                borderColor: `${stageColor}40`,
+                backgroundColor: `${stageColor}10`,
+                color: stageColor,
+              }}
             >
               <FileText className="w-3 h-3 shrink-0" />
               <span className="truncate max-w-[180px]">{attachedDoc.name}</span>
-              {attachedDoc.truncated && <span className="opacity-60">(truncated)</span>}
+              {attachedDoc.truncated && (
+                <span className="opacity-60">(truncated)</span>
+              )}
               <button
                 onClick={() => setAttachedDoc(null)}
                 className="ml-1 opacity-60 hover:opacity-100 transition-opacity"
@@ -474,7 +501,10 @@ export function ChatInterface({
         {parseError && (
           <div className="flex items-center justify-between text-xs text-destructive mb-2 px-1">
             <span>{parseError}</span>
-            <button onClick={() => setParseError(null)} className="opacity-60 hover:opacity-100">
+            <button
+              onClick={() => setParseError(null)}
+              className="opacity-60 hover:opacity-100"
+            >
               <X className="w-3 h-3" />
             </button>
           </div>

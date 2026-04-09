@@ -39,9 +39,11 @@ const CANVAS_BLOCKS: {
 
 interface CanvasGridProps {
   projectId: string;
+  /** When true, removes the outer scroll wrapper (used inside a full-page view) */
+  fullPage?: boolean;
 }
 
-export function CanvasGrid({ projectId }: CanvasGridProps) {
+export function CanvasGrid({ projectId, fullPage }: CanvasGridProps) {
   const [data, setData] = useState<CanvasData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -86,7 +88,9 @@ export function CanvasGrid({ projectId }: CanvasGridProps) {
   }
 
   return (
-    <div className="p-4 space-y-3 overflow-y-auto">
+    <div
+      className={fullPage ? "p-4 space-y-3" : "p-4 space-y-3 overflow-y-auto"}
+    >
       {/* Counter */}
       <div className="flex items-center justify-between px-1">
         <span className="text-[10px] uppercase text-muted-foreground tracking-wider">
@@ -99,7 +103,13 @@ export function CanvasGrid({ projectId }: CanvasGridProps) {
       </div>
 
       {/* Grid: classic lean canvas layout */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+      <div
+        className={
+          fullPage
+            ? "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3"
+            : "grid grid-cols-2 lg:grid-cols-4 gap-2"
+        }
+      >
         {CANVAS_BLOCKS.map((block) => (
           <CanvasCell
             key={block.key}
@@ -109,6 +119,7 @@ export function CanvasGrid({ projectId }: CanvasGridProps) {
             blockNumber={block.number}
             projectId={projectId}
             onSave={handleSave}
+            minHeight={fullPage ? "160px" : "120px"}
           />
         ))}
       </div>
