@@ -12,6 +12,7 @@ import { prisma } from "@/lib/db/prisma";
 import { ProjectHeader } from "@/components/project/project-header";
 import { HealthScorePanel } from "@/components/project/health-score-panel";
 import { ShareSection } from "@/components/project/share-section";
+import { IdealClientProfilerCard } from "@/components/ideal-client/profiler-card";
 
 const CANVAS_FIELDS = [
   "problem",
@@ -132,6 +133,39 @@ export default async function ProjectOverviewPage({
 
       {/* Share with advisors */}
       <ShareSection projectId={id} />
+
+      {/* Ideal Client Profiler */}
+      <div>
+        <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-4">
+          Validation Tools
+        </h2>
+        <div className="space-y-3">
+          <IdealClientProfilerCard projectId={id} />
+          <Link href={`/project/${id}/solana-viability`}>
+            <Card className="hover:border-foreground/20 transition-colors h-full cursor-pointer">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-purple-600/20 flex items-center justify-center text-purple-400 font-bold text-sm">
+                      ◎
+                    </div>
+                    <CardTitle className="text-sm">Solana Viability</CardTitle>
+                  </div>
+                  <Badge className="bg-purple-600 text-white text-[10px]">
+                    NEW
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-xs text-muted-foreground">
+                  Use Colosseum Copilot to analyse your project's viability on
+                  Solana, find competitors, and get market insights.
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+        </div>
+      </div>
 
       {/* Stages grid */}
       <div>

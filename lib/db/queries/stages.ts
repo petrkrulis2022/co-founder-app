@@ -12,13 +12,10 @@ export async function getOrCreateStage(
   projectId: string,
   stageKey: string,
 ): Promise<Stage> {
-  const existing = await prisma.stage.findUnique({
+  return prisma.stage.upsert({
     where: { projectId_stageKey: { projectId, stageKey } },
-  });
-  if (existing) return existing;
-
-  return prisma.stage.create({
-    data: { projectId, stageKey },
+    update: {}, // Don't update anything if it exists
+    create: { projectId, stageKey },
   });
 }
 

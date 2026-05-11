@@ -27,7 +27,10 @@ export function StageNav({ projectId, stages, stageStatusMap }: StageNavProps) {
     <nav className="flex-1 overflow-y-auto py-2 px-2">
       {stages.map((stage) => {
         const status = stageStatusMap[stage.key] || "not_started";
-        const href = `/project/${projectId}/${stage.key}`;
+        const href =
+          stage.key === "solana-viability"
+            ? `/project/${projectId}/solana-viability`
+            : `/project/${projectId}/${stage.key}`;
         const isActive = pathname === href;
 
         return (

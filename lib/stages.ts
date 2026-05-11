@@ -39,12 +39,20 @@ export const STAGES: StageConfig[] = [
     number: 4,
   },
   {
+    key: "marketing-campaign",
+    label: "Marketing",
+    description:
+      "Build your pre-launch & launch marketing: channels, StoryBrand, founder funnel, virality",
+    color: "#f43f5e",
+    number: 5,
+  },
+  {
     key: "selection",
     label: "Selection",
     description:
       "Prioritize features using the Kano model and effort-impact matrix",
     color: "#ffaa00",
-    number: 5,
+    number: 6,
   },
   {
     key: "mvp",
@@ -52,14 +60,14 @@ export const STAGES: StageConfig[] = [
     description:
       "Define your minimum viable product: scope, timeline, and success criteria",
     color: "#ff6b35",
-    number: 6,
+    number: 7,
   },
   {
     key: "mafia-offer",
     label: "Mafia Offer",
     description: "Craft an offer so compelling your target users can't say no",
     color: "#00d4ff",
-    number: 7,
+    number: 8,
   },
   {
     key: "build",
@@ -67,7 +75,7 @@ export const STAGES: StageConfig[] = [
     description:
       "Plan 5 build sprints with milestones, tasks, and owner assignments",
     color: "#c084fc",
-    number: 8,
+    number: 9,
   },
   {
     key: "launch",
@@ -75,14 +83,14 @@ export const STAGES: StageConfig[] = [
     description:
       "Plan your launch strategy: channels, timeline, and growth loops",
     color: "#00ff9d",
-    number: 9,
+    number: 10,
   },
   {
     key: "feedback",
     label: "Feedback",
     description: "Design feedback loops, interviews, and metrics dashboards",
     color: "#00d4ff",
-    number: 10,
+    number: 11,
   },
   {
     key: "pitch",
@@ -90,14 +98,14 @@ export const STAGES: StageConfig[] = [
     description:
       "Build a 10-slide investor pitch with problem, solution, traction, and ask",
     color: "#ffaa00",
-    number: 11,
+    number: 12,
   },
   {
     key: "token-launch",
     label: "Token Launch",
     description: "Design tokenomics, vesting schedules, and launch mechanics",
     color: "#ff4444",
-    number: 12,
+    number: 13,
   },
   {
     key: "decision",
@@ -105,7 +113,15 @@ export const STAGES: StageConfig[] = [
     description:
       "Review all data and make your final go / no-go / pivot decision",
     color: "#ffffff",
-    number: 13,
+    number: 14,
+  },
+  {
+    key: "solana-viability",
+    label: "Solana Viability",
+    description:
+      "Use Colosseum Copilot to analyse your project's viability on Solana, find competitors, and get market insights",
+    color: "#9945FF",
+    number: 15,
   },
 ];
 

@@ -16,23 +16,27 @@ model User {
 }
 
 model Project {
-  id            String           @id @default(cuid())
-  userId        String
-  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  name          String
-  domain        String?
-  thesis        String?          @db.Text
-  status        String           @default("active")
-  stages        Stage[]
-  leanCanvas    LeanCanvas?
-  scores        StressScore[]
-  pitchSections PitchSection[]
-  sprintEntries SprintEntry[]
-  tokenLaunch   TokenLaunchPlan?
-  exports       Export[]
-  shareLinks    ShareLink[]
-  createdAt     DateTime         @default(now())
-  updatedAt     DateTime         @updatedAt
+  id                     String                 @id @default(cuid())
+  userId                 String
+  user                   User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name                   String
+  domain                 String?
+  thesis                 String?                @db.Text
+  status                 String                 @default("active")
+  stages                 Stage[]
+  leanCanvas             LeanCanvas?
+  idealClientProfiler    IdealClientProfiler?
+  blueOceanStrategy      BlueOceanStrategy?
+  marketingCampaign      MarketingCampaign?
+  scores                 StressScore[]
+  pitchSections          PitchSection[]
+  sprintEntries          SprintEntry[]
+  tokenLaunch            TokenLaunchPlan?
+  solanaViability        SolanaViabilityAnalysis?
+  exports                Export[]
+  shareLinks             ShareLink[]
+  createdAt              DateTime               @default(now())
+  updatedAt              DateTime               @updatedAt
 }
 
 model Stage {
@@ -88,6 +92,97 @@ model LeanCanvas {
   highLevelConcept     String?  @db.Text
   earlyAdopters        String?  @db.Text
   updatedAt            DateTime @updatedAt
+}
+
+model IdealClientProfiler {
+  id                      String   @id @default(cuid())
+  projectId               String   @unique
+  project                 Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  // BEFORE State - Demographics & Interests
+  beforeHaves             String?  @db.Text
+  beforeThinks            String?  @db.Text
+  beforeFeels             String?  @db.Text
+  previousActionsPurchases String? @db.Text
+  beforeAverageDay        String?  @db.Text
+  beforeStatus            String?  @db.Text
+  // AFTER State - Transformation
+  afterHaves              String?  @db.Text
+  afterFeels              String?  @db.Text
+  afterAverageDay         String?  @db.Text
+  afterStatus             String?  @db.Text
+  // Market Narrative
+  contrarian              String?  @db.Text
+  villain                 String?  @db.Text
+  slogan                  String?  @db.Text
+  // Purchase Drivers
+  keyPurchaseDrivers      String?  @db.Text
+  updatedAt               DateTime @updatedAt
+}
+
+model BlueOceanStrategy {
+  id                      String   @id @default(cuid())
+  projectId               String   @unique
+  project                 Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  // Competing On - Red Ocean Factors
+  competingOn             String?  @db.Text
+  // Four Actions Framework
+  eliminate               String?  @db.Text
+  reduce                  String?  @db.Text
+  raise                   String?  @db.Text
+  create                  String?  @db.Text
+  // Blue Ocean Definition
+  blueOceanFocus          String?  @db.Text
+  blueOceanBenefits       String?  @db.Text
+  // Competitive Advantage
+  alternativesThreaten    String?  @db.Text
+  targetCustomers         String?  @db.Text
+  updatedAt               DateTime @updatedAt
+}
+
+model MarketingCampaign {
+  id                    String   @id @default(cuid())
+  projectId             String   @unique
+  project               Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  // Project Identity
+  websiteUrl            String?  @db.Text
+  projectTagline        String?  @db.Text
+  // Channels JSON: { twitter: { enabled, handle, hashtags, postIdeas }, ... }
+  channels              Json?
+  // Demo / Beta
+  demoUrl               String?  @db.Text
+  betaLimit             Int?
+  betaInviteStrategy    String?  @db.Text
+  // StoryBrand 7-Part Framework
+  storybrandHero        String?  @db.Text
+  storybrandProblem     String?  @db.Text
+  storybrandGuide       String?  @db.Text
+  storybrandPlan        String?  @db.Text
+  storybrandCTA         String?  @db.Text
+  storybrandFailure     String?  @db.Text
+  storybrandSuccess     String?  @db.Text
+  // Phase 1 - Pre-Launch
+  whisperTeaseShout     String?  @db.Text
+  contentMissionVision  String?  @db.Text
+  contentFounderStory   String?  @db.Text
+  contentContrarian     String?  @db.Text
+  communityTargets      String?  @db.Text
+  // Phase 2 - Launch
+  launchPath            String?
+  coldStartNotes        String?  @db.Text
+  influencerStrategy    String?  @db.Text
+  founderAuthority      String?  @db.Text
+  launchAnnouncement    String?  @db.Text
+  // Phase 3 - Mid-Funnel
+  commitmentCurve       String?  @db.Text
+  discoveryCallNotes    String?  @db.Text
+  vipListStrategy       String?  @db.Text
+  townhallPlan          String?  @db.Text
+  // Phase 4 - Virality
+  socialProofPlan       String?  @db.Text
+  scarcityMechanics     String?  @db.Text
+  hierarchyDesign       String?  @db.Text
+  greedMechanics        String?  @db.Text
+  updatedAt             DateTime @updatedAt
 }
 
 model StressScore {
@@ -171,4 +266,22 @@ model ShareLink {
   viewCount    Int       @default(0)
   createdAt    DateTime  @default(now())
   lastViewedAt DateTime?
+}
+
+model SolanaViabilityAnalysis {
+  id              String   @id @default(cuid())
+  projectId       String   @unique
+  project         Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  query           String?  @db.Text
+  competitors     Json?
+  gapClassification String?
+  gapDetails      String?  @db.Text
+  incumbents      Json?
+  recommendations String?  @db.Text
+  revenueModel    String?  @db.Text
+  gtmStrategy     String?  @db.Text
+  risks           String?  @db.Text
+  rawResponse     Json?
+  analysedAt      DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
