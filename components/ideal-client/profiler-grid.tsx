@@ -177,13 +177,49 @@ export function IdealClientProfilerGrid({
 
   return (
     <div className="space-y-8 p-6">
+      {/* CUSTOMER FORCES — the switch equation */}
+      <div className="rounded-lg border border-border bg-card/50 p-5">
+        <h3 className="text-sm font-semibold tracking-wide text-muted-foreground">
+          THE SWITCH EQUATION
+        </h3>
+        <p className="mt-2 text-sm">
+          People switch only when{" "}
+          <span className="font-semibold text-foreground">
+            Push + Pull &gt; Friction + Inertia
+          </span>
+          . Map all four forces, not just the appealing two — inertia is heavy,
+          so a merely attractive Pull rarely beats it.
+        </p>
+        <div className="mt-3 grid grid-cols-1 gap-2 text-xs sm:grid-cols-2">
+          <div className="rounded bg-blue-500/10 p-2">
+            <span className="font-semibold text-blue-500">Push</span> — what&apos;s
+            broken about their current situation (your <em>Before</em> state)
+          </div>
+          <div className="rounded bg-green-500/10 p-2">
+            <span className="font-semibold text-green-500">Pull</span> — the
+            outcome they want and can&apos;t get today (your <em>After</em> state)
+          </div>
+          <div className="rounded bg-orange-500/10 p-2">
+            <span className="font-semibold text-orange-500">Friction</span> — the
+            effort &amp; worry of switching (migration, learning curve, &ldquo;will
+            this work for me?&rdquo;)
+          </div>
+          <div className="rounded bg-muted p-2">
+            <span className="font-semibold">Inertia</span> — the comfort of the
+            status quo (&ldquo;it&apos;s not great, but I know how it works&rdquo;)
+          </div>
+        </div>
+      </div>
+
       {/* BEFORE STATE */}
       <div className="space-y-4">
         <h2 className="text-2xl font-bold text-blue-500">
-          BEFORE - Current State
+          BEFORE - Current State (the Push)
         </h2>
         <p className="text-sm text-muted-foreground">
-          Map out your ideal client&apos;s current state, challenges, and context
+          Map your ideal client&apos;s current state, challenges, and context —
+          this is the Push: what&apos;s broken enough today to make them consider
+          a switch.
         </p>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {beforeFields.map((field) => (
@@ -205,10 +241,12 @@ export function IdealClientProfilerGrid({
       {/* AFTER STATE */}
       <div className="space-y-4">
         <h2 className="text-2xl font-bold text-green-500">
-          AFTER - Transformed State
+          AFTER - Transformed State (the Pull)
         </h2>
         <p className="text-sm text-muted-foreground">
-          Define the transformation your solution creates
+          Define the transformation your solution creates — this is the Pull. Be
+          honest about whether it&apos;s strong enough to overcome the Friction
+          and Inertia of switching.
         </p>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {afterFields.map((field) => (

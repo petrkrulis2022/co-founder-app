@@ -16,12 +16,19 @@ export const STAGES: StageConfig[] = [
     number: 1,
   },
   {
+    key: "lean-canvas",
+    label: "Lean Canvas",
+    description: "Fill all 12 blocks of your Lean Canvas business model",
+    color: "#c084fc",
+    number: 2,
+  },
+  {
     key: "validation",
     label: "Validation",
     description:
       "Validate market demand, competitors, and user willingness to pay",
     color: "#00d4ff",
-    number: 2,
+    number: 3,
   },
   {
     key: "stress-test",
@@ -29,13 +36,6 @@ export const STAGES: StageConfig[] = [
     description:
       "Score your idea across 7 dimensions: market, team, tech, revenue, moat, timing, token",
     color: "#ff6b35",
-    number: 3,
-  },
-  {
-    key: "lean-canvas",
-    label: "Lean Canvas",
-    description: "Fill all 12 blocks of your Lean Canvas business model",
-    color: "#c084fc",
     number: 4,
   },
   {
@@ -101,18 +101,18 @@ export const STAGES: StageConfig[] = [
     number: 12,
   },
   {
-    key: "token-launch",
-    label: "Token Launch",
-    description: "Design tokenomics, vesting schedules, and launch mechanics",
-    color: "#ff4444",
-    number: 13,
-  },
-  {
     key: "decision",
     label: "Decision",
     description:
       "Review all data and make your final go / no-go / pivot decision",
     color: "#ffffff",
+    number: 13,
+  },
+  {
+    key: "token-launch",
+    label: "Token Launch",
+    description: "Design tokenomics, vesting schedules, and launch mechanics",
+    color: "#ff4444",
     number: 14,
   },
   {
