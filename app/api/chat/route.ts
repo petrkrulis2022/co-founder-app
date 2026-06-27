@@ -132,7 +132,7 @@ export async function POST(req: NextRequest) {
       async start(controller) {
         try {
           const response = await anthropic.messages.stream({
-            model: "claude-sonnet-4-20250514",
+            model: "claude-haiku-4-5",
             max_tokens: 1024,
             system: systemPrompt,
             messages: anthropicMessages,
@@ -166,7 +166,7 @@ export async function POST(req: NextRequest) {
             const summaryPrompt =
               "Summarize the key founder insights from this conversation in 2-3 sentences. Focus on decisions made and key facts revealed.";
             const summaryResponse = await anthropic.messages.create({
-              model: "claude-sonnet-4-20250514",
+              model: "claude-haiku-4-5",
               max_tokens: 256,
               messages: [
                 {
